@@ -150,3 +150,4 @@ Interesting directories:
 - [`src/common/middleware/`](./src/common/middleware/) centralizes cross-cutting auth/upload middleware.
 - [`src/database/model/`](./src/database/model/) holds Mongoose schemas and collection models.
 - [`uploads/`](./uploads/) stores runtime-uploaded images and is exposed as a static path.
+
