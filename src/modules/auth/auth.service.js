@@ -17,10 +17,9 @@ export const signupService = async (req, res) => {
     return res.json({ message: "password not match" });
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
   let image = "";
-  console.log(req.file);
-  if (req.file)
-    image = `http://localhost:3000/uploads/${req.file.originalname}`;
+  if (req.file) image = `${baseUrl}/uploads/${req.file.filename}`;
   console.log(image);
 
   const addedUser = await User.create({

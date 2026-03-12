@@ -7,11 +7,12 @@ export const sendMessageService = async (req, res) => {
 
   if (!user) return res.json({ message: "user don't exist" });
 
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
   let images = "";
 
   if (req.files)
     images = req.files.map(
-      (el) => `http://localhost:3000/uploads/${el.originalname}`,
+      (el) => `${baseUrl}/uploads/${el.filename}`,
     );
 
   const addedMessage = await Message.create({ receiverId, content, images });

@@ -28,10 +28,11 @@ export const updateProfileService = async (req, res) => {
 
 export const getProfileUrlService = async (req, res) => {
   const user = req.user;
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
 
   return res.json({
     message: "success",
-    url: `http://localhost:3000/api/v1/users/${user.shareProfileName}`,
+    url: `${baseUrl}/api/v1/users/${user.shareProfileName}`,
   });
 };
 

@@ -1,14 +1,19 @@
 import mongoose from "mongoose";
 
-export const databaseConnection = () => {
-  mongoose
-    .connect(
-      "mongodb+srv://mohamedmokhtarfai_db_user:2Vr66AK3pdHvBovQ@cluster0.pswakpe.mongodb.net/sara7a-app?appName=Cluster0",
-    )
-    .then(() => {
-      console.log("database connected");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+let isConnected = false;
+
+export const databaseConnection = async () => {
+  if (isConnected) return;
+
+  const mongoUri = process.env.MONGODB_URI;
+  if (!mongoUri) {
+    throw new Error("Missing MONGODB_URI environment variable");
+  }
+
+  await mongoose.connect(mongoUri, {
+    serverSelectionTimeoutMS: 10000,
+  });
+
+  isConnected = true;
+  console.log("database connected");
 };
