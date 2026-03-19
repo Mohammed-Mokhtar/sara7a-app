@@ -86,6 +86,7 @@ export const verifyAccount = async (req, res) => {
   if (otp != user.otp) return res.json({ message: "this otp is wrong" });
 
   user.isVerified = true;
+  user.otp = null;
 
   await user.save();
 
