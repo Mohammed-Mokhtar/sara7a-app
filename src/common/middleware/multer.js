@@ -1,12 +1,12 @@
 import multer from "multer";
 import fs from "node:fs";
+import { env } from "../../../config/env.js";
 
 export const uploadFile = () => {
-  const uploadDir = process.env.VERCEL ? "/tmp/uploads" : "uploads";
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      fs.mkdirSync(uploadDir, { recursive: true });
-      cb(null, uploadDir);
+      fs.mkdirSync(env.uploadsDir, { recursive: true });
+      cb(null, env.uploadsDir);
     },
     filename: (req, file, cb) => {
       cb(null, `${Date.now()}-${file.originalname}`);
@@ -14,3 +14,4 @@ export const uploadFile = () => {
   });
   return multer({ storage });
 };
+

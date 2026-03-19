@@ -1,5 +1,6 @@
 import express from "express";
 import { databaseConnection } from "./database/connection.js";
+import { env } from "../config/env.js";
 import authRouter from "./modules/auth/auth.controller.js";
 import userRouter from "./modules/users/users.controller.js";
 import messageRouter from "./modules/messages/messages.controller.js";
@@ -7,8 +8,7 @@ import messageRouter from "./modules/messages/messages.controller.js";
 export const createApp = () => {
   const app = express();
   app.use(express.json());
-  const uploadsDir = process.env.VERCEL ? "/tmp/uploads" : "uploads";
-  app.use("/uploads", express.static(uploadsDir));
+  app.use("/uploads", express.static(env.uploadsDir));
 
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/users", userRouter);
@@ -32,9 +32,7 @@ export const createApp = () => {
 export const bootstrap = async (app = createApp()) => {
   await databaseConnection();
 
-  const port = process.env.PORT || 3000;
-
-  app.listen(port, () => {
-    console.log(`listening on port ${port}`);
+  app.listen(env.port, () => {
+    console.log(`listening on port ${env.port}`);
   });
 };
