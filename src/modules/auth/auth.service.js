@@ -137,3 +137,4 @@ export const generateAccessToken = (req, res) => {
   });
   return res.json({ accessToken });
 };
+
