@@ -104,7 +104,7 @@ export const forgetPassword = async (req, res) => {
 
   await existedEmail.save();
 
-  sendMail(email, "reset password", `your otp is ${otp}`);
+  await sendMail(email, "reset password", `your otp is ${otp}`);
   res.json({ message: "otp sent" });
 };
 
@@ -137,4 +137,3 @@ export const generateAccessToken = (req, res) => {
   });
   return res.json({ accessToken });
 };
-
