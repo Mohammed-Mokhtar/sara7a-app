@@ -34,7 +34,6 @@ export const signupService = async (req, res) => {
     password: hashedPassword,
     role,
     shareProfileName,
-    otp,
     isVerified: false,
     image,
   });
