@@ -40,7 +40,7 @@ export const signupService = async (req, res) => {
 
   const otp = generateRandomNumber(100000, 999999);
 
-  client.set(`${addedUser._id}:otp`, `${otp}`);
+  client.set(`${addedUser._id}:otp`, `${otp}`, `EX 60`);
 
   await sendMail(email, "Verify your account", `Your OTP is: ${otp}`);
 
