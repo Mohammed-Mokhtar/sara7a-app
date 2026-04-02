@@ -88,10 +88,9 @@ export const verifyAccount = async (req, res) => {
 
   const redisOtp = client.get(`${user._id}:otp`);
 
-  if (redisOtp != user.otp) return res.json({ message: "this otp is wrong" });
+  if (redisOtp != otp) return res.json({ message: "this otp is wrong" });
 
   user.isVerified = true;
-  user.otp = null;
 
   await user.save();
 
