@@ -11,9 +11,7 @@ export const sendMessageService = async (req, res) => {
   let images = "";
 
   if (req.files)
-    images = req.files.map(
-      (el) => `${baseUrl}/uploads/${el.filename}`,
-    );
+    images = req.files.map((el) => `${baseUrl}/uploads/${el.filename}`);
 
   const addedMessage = await Message.create({ receiverId, content, images });
   res.json({ message: "message sent successfully", addedMessage });
@@ -37,8 +35,6 @@ export const getSingleMessageService = async (req, res) => {
 
   if (!message) return res.json({ message: "no messages found" });
 
-  console.log("line 36");
-
   res.json({ message: "messages found", myMessage: message });
 };
 
@@ -54,3 +50,4 @@ export const deleteMessageService = async (req, res) => {
 
   res.json({ message: "messages deleted", deletedMessage });
 };
+

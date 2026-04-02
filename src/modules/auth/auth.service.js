@@ -13,8 +13,6 @@ export const signupService = async (req, res) => {
   let { name, shareProfileName, email, password, confirmPassword, role } =
     req.body;
 
-  console.log(req.body);
-
   if (!name || !email || !password || !confirmPassword)
     return res.json({ message: "body is wrong" });
 
@@ -40,7 +38,7 @@ export const signupService = async (req, res) => {
 
   const otp = generateRandomNumber(100000, 999999);
 
-  client.set(`${addedUser._id}:otp`, `${otp}`, `EX 60`);
+  await client.set(`${addedUser._id}:otp`, `${otp}`, `EX 60`);
 
   await sendMail(email, "Verify your account", `Your OTP is: ${otp}`);
 
@@ -85,7 +83,7 @@ export const verifyAccount = async (req, res) => {
 
   if (user.isVerified) return res.json({ message: "you already verified" });
 
-  const redisOtp = client.get(`${user._id}:otp`);
+  const redisOtp = await client.get(`${user._id}:otp`);
 
   if (redisOtp != otp) return res.json({ message: "this otp is wrong" });
 
@@ -104,7 +102,7 @@ export const forgetPassword = async (req, res) => {
 
   let otp = generateRandomNumber(100000, 999999);
 
-  client.set(`${existedEmail._id}:otp`, `${otp}`, "EX 60");
+  await client.set(`${existedEmail._id}:otp`, `${otp}`, "EX 60");
 
   await existedEmail.save();
 
@@ -122,7 +120,7 @@ export const resetPassword = async (req, res) => {
 
   if (!existedEmail) return res.json({ message: "this email is not found" });
 
-  const redisOtp = client.get(`${existedEmail._id}:otp`);
+  const redisOtp = await client.get(`${existedEmail._id}:otp`);
 
   if (redisOtp != otp) return res.json({ message: "this otp is wrong" });
 
@@ -135,7 +133,6 @@ export const resetPassword = async (req, res) => {
 
 export const generateAccessToken = (req, res) => {
   const user = req.user;
-  console.log(user);
   const accessToken = jwt.sign({ id: user._id }, env.jwtSecret, {
     expiresIn: env.accessTokenExpiresIn,
   });

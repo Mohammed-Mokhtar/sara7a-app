@@ -18,7 +18,5 @@ export const sendMail = async (email, subject, text) => {
     subject,
     text,
   });
-
-  console.log("Message sent:", info.messageId);
 };
 

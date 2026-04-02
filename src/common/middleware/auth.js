@@ -14,7 +14,7 @@ export const auth = async (req, res, next) => {
     let decoded = jwt.verify(realToken, env.jwtSecret);
 
     let user = await User.findById(decoded.id);
-    console.log(user);
+
     req.user = user;
 
     next();
