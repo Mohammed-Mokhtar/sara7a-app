@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 
-dotenv.config({ path: "./config/.env" });
+dotenv.config({ path: "./config/.env", quiet: true });
 
 export const env = {
   isVercel: Boolean(process.env.VERCEL),

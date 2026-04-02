@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { env } from "../../../config/env.js";
 import { sendMail } from "../../common/email/sendEmail.js";
+import { client } from "../../database/redis.connection.js";
 
 const generateRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -27,10 +28,6 @@ export const signupService = async (req, res) => {
   let image = "";
   if (req.file) image = `${baseUrl}/uploads/${req.file.filename}`;
 
-  const otp = generateRandomNumber(100000, 999999);
-
-  await sendMail(email, "Verify your account", `Your OTP is: ${otp}`);
-
   const addedUser = await User.create({
     name,
     email,
@@ -41,6 +38,12 @@ export const signupService = async (req, res) => {
     isVerified: false,
     image,
   });
+
+  const otp = generateRandomNumber(100000, 999999);
+
+  client.set(`${addedUser._id}:otp`, `${otp}`);
+
+  await sendMail(email, "Verify your account", `Your OTP is: ${otp}`);
 
   res.json({ message: "user added please verify account", addedUser });
 };
@@ -83,7 +86,9 @@ export const verifyAccount = async (req, res) => {
 
   if (user.isVerified) return res.json({ message: "you already verified" });
 
-  if (otp != user.otp) return res.json({ message: "this otp is wrong" });
+  const redisOtp = client.get(`${user._id}:otp`);
+
+  if (redisOtp != user.otp) return res.json({ message: "this otp is wrong" });
 
   user.isVerified = true;
   user.otp = null;
@@ -101,7 +106,7 @@ export const forgetPassword = async (req, res) => {
 
   let otp = generateRandomNumber(100000, 999999);
 
-  existedEmail.otp = otp;
+  client.set(`${existedEmail._id}:otp`, `${otp}`, "EX 60");
 
   await existedEmail.save();
 
@@ -119,11 +124,11 @@ export const resetPassword = async (req, res) => {
 
   if (!existedEmail) return res.json({ message: "this email is not found" });
 
-  if (existedEmail.otp != otp)
-    return res.json({ message: "this otp is wrong" });
+  const redisOtp = client.get(`${existedEmail._id}:otp`);
+
+  if (redisOtp != otp) return res.json({ message: "this otp is wrong" });
 
   existedEmail.password = await bcrypt.hash(newPassword, env.bcryptSaltRounds);
-  existedEmail.otp = null;
 
   await existedEmail.save();
 
